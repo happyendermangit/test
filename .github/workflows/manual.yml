@@ -1,0 +1,29 @@
+name: Commit comments
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  comments:
+    name: Comment on commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Comment on commit
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { context } = require('@actions/github');
+            const octokit = context.octokit;
+            const sha = context.sha;
+
+            octokit.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: sha,
+              body: 'This is a comment on the commit.',
+            });
